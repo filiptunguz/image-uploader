@@ -1,9 +1,11 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import ImageUploader from "../components/ImageUploader.tsx";
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import ImageUploader from '../components/ImageUploader.tsx';
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-      <ImageUploader />
-  </StrictMode>
-)
+	<StrictMode>
+		<div className="flex justify-center items-center h-screen bg-white">
+			<ImageUploader onFileSelected={console.log} />
+		</div>
+	</StrictMode>,
+);
