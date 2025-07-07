@@ -1,6 +1,6 @@
 import { cn } from '../utils/utils.ts';
 import type { ReactNode } from 'react';
-import { CloseIcon } from '../icons/DefaultIcons.tsx';
+import { CloseIcon, EditIcon } from '../icons/DefaultIcons.tsx';
 
 type ImagePreviewerProps = {
 	cardClassName?: string;
@@ -10,6 +10,8 @@ type ImagePreviewerProps = {
 	gridColumns?: number;
 	onRemove?: (file: File) => void;
 	removeIcon?: ReactNode;
+	onEditClick?: (file: File) => void;
+	editIcon?: ReactNode;
 };
 
 export default function ImagePreviewer({ gridColumns = 4, ...props }: ImagePreviewerProps) {
@@ -31,7 +33,7 @@ export default function ImagePreviewer({ gridColumns = 4, ...props }: ImagePrevi
 						className={cn(
 							'flex-shrink-0 size-[200px] border border-gray-400 rounded-lg',
 							props.cardClassName,
-							props.onRemove && 'relative',
+							(props.onRemove || props.onEditClick) && 'relative group',
 						)}
 					>
 						{props.onRemove &&
@@ -49,6 +51,15 @@ export default function ImagePreviewer({ gridColumns = 4, ...props }: ImagePrevi
 							className={cn('w-full h-full object-contain', props.imageClassName)}
 							onLoad={() => URL.revokeObjectURL(url)} // Clean up memory
 						/>
+						{props.onEditClick &&
+							(props.editIcon ?? (
+								<div
+									className="absolute  bottom-1 right-1 text-gray-800 opacity-0 cursor-pointer group-hover:opacity-100 hover:text-gray-400 transition-[opacity,text-color]"
+									onClick={() => props.onEditClick!(file)}
+								>
+									<EditIcon />
+								</div>
+							))}
 					</div>
 				);
 			})}
