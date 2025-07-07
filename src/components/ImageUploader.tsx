@@ -1,3 +1,3 @@
 export default function ImageUploader() {
-    return <></>
+    return <div className="text-red-500">TextRed</div>
 }
