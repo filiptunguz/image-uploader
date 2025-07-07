@@ -17,7 +17,7 @@ export default function App() {
 		<div className="flex justify-center items-center h-screen bg-white flex-col gap-8">
 			<ImageUploader onFileSelected={setFiles} />
 			<ImagePreviewer files={files} onRemove={handleRemove} onEditClick={setFileToEdit} />
-			<ImageEditor file={fileToEdit} />
+			{fileToEdit && <ImageEditor file={fileToEdit} />}
 		</div>
 	);
 }

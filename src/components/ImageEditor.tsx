@@ -1,24 +1,43 @@
+import { useEffect, useRef } from 'react';
+
 type ImageEditorProps = {
-	file: File | null;
+	file: File;
+	canvasWidth?: number;
 };
 
-export default function ImageEditor(props: ImageEditorProps) {
+export default function ImageEditor({ canvasWidth = 500, ...props }: ImageEditorProps) {
+	const canvasRef = useRef<HTMLCanvasElement | null>(null);
 	const { file } = props;
 
-	if (!file) return null;
+	useEffect(() => {
+		if (!canvasRef.current) return;
 
-	const url = URL.createObjectURL(file);
+		const url = URL.createObjectURL(file);
+		const canvas = canvasRef.current;
+		const ctx = canvas.getContext('2d');
+		if (!ctx) return;
 
-	return (
-		<div className="flex justify-center bg-white">
-			<div className="max-w-2xl w-full p-4">
-				<img
-					src={url}
-					alt="Image Editor"
-					className="w-full h-auto object-contain border border-gray-300 rounded-lg shadow-lg"
-					onLoad={() => URL.revokeObjectURL(url)} // Clean up memory
-				/>
-			</div>
-		</div>
-	);
+		const img = new Image();
+
+		img.onload = () => {
+			// get image aspect ratio
+			const aspectRatio = img.width / img.height;
+
+			canvas.width = img.width = canvasWidth;
+			canvas.height = img.height = canvasWidth / aspectRatio;
+
+			console.log(`Image loaded: ${img.width}x${img.height}, Aspect Ratio: ${aspectRatio}`);
+
+			ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+			canvas.style.display = 'block'; // Show the canvas after drawing
+		};
+
+		img.src = url;
+
+		return () => {
+			URL.revokeObjectURL(url);
+		};
+	}, [file]);
+
+	return <canvas className="hidden" ref={canvasRef} />;
 }
