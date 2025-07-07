@@ -3,6 +3,7 @@ import { cn } from '../utils/utils.ts';
 type ImagePreviewerProps = {
 	cardClassName?: string;
 	containerClassName?: string;
+	imageClassName?: string;
 	files: File[];
 	gridColumns?: number;
 };
@@ -31,7 +32,7 @@ export default function ImagePreviewer({ gridColumns = 4, ...props }: ImagePrevi
 						<img
 							src={url}
 							alt={`Preview ${index}`}
-							className="w-full h-full object-contain"
+							className={cn('w-full h-full object-contain', props.imageClassName)}
 							onLoad={() => URL.revokeObjectURL(url)} // Clean up memory
 						/>
 					</div>
