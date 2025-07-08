@@ -1,64 +1,46 @@
 import { SouthEastIcon } from '../icons/DefaultIcons.tsx';
-import { useImageCrop } from '../hooks/useImageCrop.ts';
+import type { MouseEvent as ReactMouseEvent, RefObject } from 'react';
+import type { Crop } from '../utils/cropImageFile.ts';
 
 type ImageEditorProps = {
-	file: File;
-	canvasWidth?: number;
-	keepAspectRatio?: boolean;
+	crop: Crop;
+	onMouseMove: (event: ReactMouseEvent) => void;
+	containerRef: RefObject<HTMLDivElement | null>;
+	canvasRef: RefObject<HTMLCanvasElement | null>;
+	onMoveMouseDown: (event: ReactMouseEvent) => void;
+	onResizeMouseDown: (event: ReactMouseEvent) => void;
+	resolutionLabel: string;
 };
 
-export default function ImageEditor({ canvasWidth = 500, ...props }: ImageEditorProps) {
-	const { file } = props;
-	const {
-		crop,
-		canvasRef,
-		containerRef,
-		onResizeMouseDown,
-		onMoveMouseDown,
-		onMouseMove,
-		onCrop,
-		resolutionLabel,
-	} = useImageCrop(file, canvasWidth, 1);
-
-	const handleOnCrop = async () => {
-		const croppedBlob = await onCrop();
-		const uploadableFile = new File([croppedBlob], file.name, { ...file });
-
-		// Temporary preview for testing purposes
-		const img = document.createElement('img');
-		img.src = URL.createObjectURL(uploadableFile);
-		document.body.appendChild(img);
-	};
-
+export default function ImageEditor(props: ImageEditorProps) {
 	return (
 		<>
 			<div
 				className="hidden relative border border-gray-400"
-				onMouseMove={onMouseMove}
-				ref={containerRef}
+				onMouseMove={props.onMouseMove}
+				ref={props.containerRef}
 			>
-				<canvas ref={canvasRef} />
+				<canvas ref={props.canvasRef} />
 				<div
 					className="absolute top-0 left-0 resize border-white border-[3px] h-full w-full"
-					onMouseDown={onMoveMouseDown}
+					onMouseDown={props.onMoveMouseDown}
 					style={{
-						width: `${crop.width}px`,
-						height: `${crop.height}px`,
-						transform: `translate(${crop.x}px, ${crop.y}px)`,
+						width: `${props.crop.width}px`,
+						height: `${props.crop.height}px`,
+						transform: `translate(${props.crop.x}px, ${props.crop.y}px)`,
 					}}
 				>
 					<div
 						className="absolute -bottom-0.5 -right-0.5 text-white hover:text-gray-200 transition-colors"
-						onMouseDown={onResizeMouseDown}
+						onMouseDown={props.onResizeMouseDown}
 					>
 						<SouthEastIcon />
 					</div>
 					<div className="absolute top-0 left-0 bg-white px-1 py-0.5 text-xs">
-						{resolutionLabel}
+						{props.resolutionLabel}
 					</div>
 				</div>
 			</div>
-			<button onClick={handleOnCrop}>crop2</button>
 		</>
 	);
 }

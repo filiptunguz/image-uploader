@@ -1,7 +1,7 @@
 import ImageUploader from '../components/ImageUploader.tsx';
 import { useState } from 'react';
 import ImagePreviewer from '../components/ImagePreviewer.tsx';
-import ImageEditor from '../components/ImageEditor.tsx';
+import SimpleImageCropper from './components/SimpleImageCropper.tsx';
 
 export default function App() {
 	// TODO: create wrapper component for ImageUploader and ImagePreviewer
@@ -17,7 +17,7 @@ export default function App() {
 		<div className="flex justify-center items-center h-screen bg-white flex-col gap-8">
 			<ImageUploader onFileSelected={setFiles} />
 			<ImagePreviewer files={files} onRemove={handleRemove} onEditClick={setFileToEdit} />
-			{fileToEdit && <ImageEditor file={fileToEdit} />}
+			{fileToEdit && <SimpleImageCropper file={fileToEdit} />}
 		</div>
 	);
 }
