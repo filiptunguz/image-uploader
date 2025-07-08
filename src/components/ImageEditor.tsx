@@ -18,7 +18,17 @@ export default function ImageEditor({ canvasWidth = 500, ...props }: ImageEditor
 		onMouseMove,
 		onCrop,
 		resolutionLabel,
-	} = useImageCrop(file, canvasWidth, true);
+	} = useImageCrop(file, canvasWidth, 1);
+
+	const handleOnCrop = async () => {
+		const croppedBlob = await onCrop();
+		const uploadableFile = new File([croppedBlob], file.name, { ...file });
+
+		// Temporary preview for testing purposes
+		const img = document.createElement('img');
+		img.src = URL.createObjectURL(uploadableFile);
+		document.body.appendChild(img);
+	};
 
 	return (
 		<>
@@ -48,7 +58,7 @@ export default function ImageEditor({ canvasWidth = 500, ...props }: ImageEditor
 					</div>
 				</div>
 			</div>
-			<button onClick={onCrop}>crop2</button>
+			<button onClick={handleOnCrop}>crop2</button>
 		</>
 	);
 }

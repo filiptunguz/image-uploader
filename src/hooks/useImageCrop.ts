@@ -1,19 +1,22 @@
 import { type MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from 'react';
 import { type Crop, cropImageFile } from '../utils/cropImageFile.ts';
 
+// Default crop state
 const defaultCrop: Crop = { x: 0, y: 0, width: 0, height: 0, canvasWidth: 0 };
 
+// Hook to manage image cropping interaction logic
 export const useImageCrop = (file: File, canvasWidth: number, keepAspectRatio?: number | true) => {
 	const [crop, setCrop] = useState<Crop>(defaultCrop);
 	const [resizing, setResizing] = useState(false);
 	const [resizeStart, setResizeStart] = useState<Crop>(defaultCrop);
 	const [moving, setMoving] = useState(false);
-	const [moveLastPoint, setMoveLastPoint] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+	const [moveLastPoint, setMoveLastPoint] = useState({ x: 0, y: 0 });
 
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
 	const containerRef = useRef<HTMLDivElement | null>(null);
-	const imgWidthRef = useRef<number>(0);
+	const imgWidthRef = useRef<number>(0); // Stores the original image width
 
+	// Load and draw the image on mount or file change
 	useEffect(() => {
 		if (!canvasRef.current || !containerRef.current) return;
 
@@ -25,27 +28,22 @@ export const useImageCrop = (file: File, canvasWidth: number, keepAspectRatio?: 
 		const img = new Image();
 
 		img.onload = () => {
-			// set the image original width
-			if (!imgWidthRef.current) imgWidthRef.current = img.width;
+			imgWidthRef.current = img.width;
 
-			// get image aspect ratio
 			const aspectRatio = img.width / img.height;
 
 			canvas.width = img.width = canvasWidth;
 			canvas.height = img.height = canvasWidth / aspectRatio;
 
+			// Determine initial crop area
 			if (typeof keepAspectRatio === 'number' && keepAspectRatio > 0) {
-				const currentWidth = canvas.width;
-				const currentHeight = canvas.height;
-
-				const isWidthReference = currentWidth <= currentHeight;
-
-				const newWidth = isWidthReference ? currentWidth : currentHeight * keepAspectRatio;
-				const newHeight = isWidthReference ? currentWidth / keepAspectRatio : currentHeight;
+				const isWidthReference = canvas.width <= canvas.height;
+				const newWidth = isWidthReference ? canvas.width : canvas.height * keepAspectRatio;
+				const newHeight = isWidthReference ? canvas.width / keepAspectRatio : canvas.height;
 
 				setCrop({
-					x: isWidthReference ? 0 : (currentWidth - newWidth) / 2,
-					y: isWidthReference ? (currentHeight - newHeight) / 2 : 0,
+					x: isWidthReference ? 0 : (canvas.width - newWidth) / 2,
+					y: isWidthReference ? (canvas.height - newHeight) / 2 : 0,
 					width: newWidth,
 					height: newHeight,
 					canvasWidth,
@@ -54,45 +52,40 @@ export const useImageCrop = (file: File, canvasWidth: number, keepAspectRatio?: 
 				setCrop({
 					x: 0,
 					y: 0,
-					width: img.width,
-					height: img.height,
+					width: canvas.width,
+					height: canvas.height,
 					canvasWidth,
 				});
 			}
 
 			ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-			containerRef.current!.style.display = 'block'; // Show the canvas after drawing
+			containerRef.current!.style.display = 'block'; // Show canvas
 		};
 
 		img.src = url;
 
-		return () => {
-			URL.revokeObjectURL(url);
-		};
+		return () => URL.revokeObjectURL(url); // Cleanup
 	}, [file]);
 
+	// Begin resizing on mouse down
 	const onResizeMouseDown = (e: ReactMouseEvent) => {
 		e.preventDefault();
 		setResizing(true);
-		setResizeStart({
-			x: e.clientX,
-			y: e.clientY,
-			width: crop.width,
-			height: crop.height,
-			canvasWidth,
-		});
+		setResizeStart({ ...crop, x: e.clientX, y: e.clientY });
 
-		addEventListener('mouseup', onMouseUp);
+		window.addEventListener('mouseup', onMouseUp);
 	};
 
+	// Begin moving on mouse down
 	const onMoveMouseDown = (e: ReactMouseEvent) => {
 		e.preventDefault();
 		setMoving(true);
 		setMoveLastPoint({ x: e.clientX, y: e.clientY });
 
-		addEventListener('mouseup', onMouseUp);
+		window.addEventListener('mouseup', onMouseUp);
 	};
 
+	// Handle crop movement or resizing
 	const onMouseMove = (e: ReactMouseEvent) => {
 		if (resizing) {
 			const deltaX = e.clientX - resizeStart.x;
@@ -106,16 +99,26 @@ export const useImageCrop = (file: File, canvasWidth: number, keepAspectRatio?: 
 			const maxHeight = containerRef.current!.clientHeight - crop.y;
 
 			setCrop((prev) => {
-				const newWidth = Math.min(Math.max(20, resizeStart.width + deltaX), maxWidth); // Minimum width: 20px
+				let newWidth;
+				let newHeight;
+
+				const isWidthReference = canvasRef.current!.clientWidth <= canvasRef.current!.clientHeight;
+				if (isWidthReference) {
+					newWidth = Math.min(Math.max(20, resizeStart.width + deltaX), maxWidth);
+					newHeight = aspectRatio
+						? newWidth / aspectRatio
+						: Math.min(Math.max(20, resizeStart.height + (e.clientY - resizeStart.y)), maxHeight);
+				} else {
+					newHeight = Math.min(Math.max(20, resizeStart.height + deltaX), maxHeight);
+					newWidth = aspectRatio
+						? newHeight * aspectRatio
+						: Math.min(Math.max(20, resizeStart.width + deltaX), maxWidth);
+				}
+
 				return {
 					...prev,
-					width: newWidth, // Minimum width: 20px
-					height: Math.min(
-						aspectRatio
-							? newWidth / aspectRatio
-							: Math.max(20, resizeStart.height + (e.clientY - resizeStart.y)),
-						maxHeight,
-					),
+					width: newWidth,
+					height: newHeight,
 					canvasWidth,
 				};
 			});
@@ -128,7 +131,7 @@ export const useImageCrop = (file: File, canvasWidth: number, keepAspectRatio?: 
 
 			setCrop((prev) => ({
 				...prev,
-				x: Math.min(Math.max(0, prev.x + deltaX), maxX), // Prevent moving out of bounds
+				x: Math.min(Math.max(0, prev.x + deltaX), maxX),
 				y: Math.min(Math.max(0, prev.y + deltaY), maxY),
 				canvasWidth,
 			}));
@@ -137,26 +140,15 @@ export const useImageCrop = (file: File, canvasWidth: number, keepAspectRatio?: 
 		}
 	};
 
+	// End resize/move operation
 	const onMouseUp = () => {
 		setResizing(false);
 		setMoving(false);
-
-		// remove event listeners
-		removeEventListener('mouseup', onMouseUp);
+		window.removeEventListener('mouseup', onMouseUp);
 	};
 
-	const onCrop = async () => {
-		if (!canvasRef.current) return;
-
-		const croppedBlob = await cropImageFile(file, crop);
-		const uploadableFile = new File([croppedBlob], file.name, { ...file });
-
-		const img = document.createElement('img');
-		img.src = URL.createObjectURL(uploadableFile);
-		document.body.appendChild(img); // For testing, append the cropped image to the body
-	};
-
-	const resolutionLabel = `${(crop.width * (imgWidthRef.current / canvasWidth)).toFixed()}px x ${(crop.height * (imgWidthRef.current / canvasWidth)).toFixed()}px`;
+	// Resolution label shown to user (real px dimensions)
+	const resolutionLabel = `${Math.round(crop.width * (imgWidthRef.current / canvasWidth))}px x ${Math.round(crop.height * (imgWidthRef.current / canvasWidth))}px`;
 
 	return {
 		crop,
@@ -166,7 +158,7 @@ export const useImageCrop = (file: File, canvasWidth: number, keepAspectRatio?: 
 		onResizeMouseDown,
 		onMoveMouseDown,
 		onMouseMove,
-		onCrop,
+		onCrop: async () => await cropImageFile(file, crop),
 		resolutionLabel,
 	};
 };
