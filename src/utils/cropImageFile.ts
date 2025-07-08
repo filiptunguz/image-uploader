@@ -13,7 +13,6 @@ export async function cropImageFile(file: File, crop: Crop): Promise<Blob> {
 
 		img.onload = () => {
 			const widthRatio = img.width / crop.canvasWidth;
-			console.log(crop.x);
 
 			const canvas = document.createElement('canvas');
 			canvas.width = crop.width * widthRatio;
