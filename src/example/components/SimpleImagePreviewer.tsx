@@ -1,6 +1,6 @@
-import { cn } from '../utils/utils.ts';
+import { cn } from '../../utils/utils.ts';
 import type { ReactNode } from 'react';
-import { CloseIcon, EditIcon } from '../icons/DefaultIcons.tsx';
+import { CloseIcon, EditIcon } from '../../icons/DefaultIcons.tsx';
 
 type ImagePreviewerProps = {
 	cardClassName?: string;
@@ -14,7 +14,7 @@ type ImagePreviewerProps = {
 	editIcon?: ReactNode;
 };
 
-export default function ImagePreviewer({ gridColumns = 4, ...props }: ImagePreviewerProps) {
+export default function SimpleImagePreviewer({ gridColumns = 4, ...props }: ImagePreviewerProps) {
 	const { files } = props;
 	if (files.length === 0) return null;
 
