@@ -28,6 +28,8 @@ export const useImageCrop = (file: File, canvasWidth: number, keepAspectRatio?: 
 		const img = new Image();
 
 		img.onload = () => {
+			URL.revokeObjectURL(url); // Cleanup previous URL
+
 			imgWidthRef.current = img.width;
 
 			const aspectRatio = img.width / img.height;
@@ -63,8 +65,6 @@ export const useImageCrop = (file: File, canvasWidth: number, keepAspectRatio?: 
 		};
 
 		img.src = url;
-
-		return () => URL.revokeObjectURL(url); // Cleanup
 	}, [file]);
 
 	// Begin resizing on mouse down
