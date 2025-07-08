@@ -11,14 +11,17 @@ type ImageEditorProps = {
 const defaultCrop: Crop = { x: 0, y: 0, width: 0, height: 0, canvasWidth: 0 };
 
 export default function ImageEditor({ canvasWidth = 500, ...props }: ImageEditorProps) {
-	const canvasRef = useRef<HTMLCanvasElement | null>(null);
-	const containerRef = useRef<HTMLDivElement | null>(null);
+	const { file } = props;
+
 	const [crop, setCrop] = useState<Crop>(defaultCrop);
 	const [resizing, setResizing] = useState(false);
 	const [resizeStart, setResizeStart] = useState<Crop>(defaultCrop);
 	const [moving, setMoving] = useState(false);
 	const [moveLastPoint, setMoveLastPoint] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-	const { file } = props;
+
+	const canvasRef = useRef<HTMLCanvasElement | null>(null);
+	const containerRef = useRef<HTMLDivElement | null>(null);
+	const imgWidthRef = useRef<number>(0);
 
 	useEffect(() => {
 		if (!canvasRef.current || !containerRef.current) return;
@@ -31,6 +34,9 @@ export default function ImageEditor({ canvasWidth = 500, ...props }: ImageEditor
 		const img = new Image();
 
 		img.onload = () => {
+			// set the image original width
+			if (!imgWidthRef.current) imgWidthRef.current = img.width;
+
 			// get image aspect ratio
 			const aspectRatio = img.width / img.height;
 
@@ -133,6 +139,8 @@ export default function ImageEditor({ canvasWidth = 500, ...props }: ImageEditor
 		document.body.appendChild(img); // For testing, append the cropped image to the body
 	};
 
+	const resolutionLabel = `${(crop.width * (imgWidthRef.current / canvasWidth)).toFixed()}px x ${(crop.height * (imgWidthRef.current / canvasWidth)).toFixed()}px`;
+
 	return (
 		<>
 			<div
@@ -155,6 +163,9 @@ export default function ImageEditor({ canvasWidth = 500, ...props }: ImageEditor
 						onMouseDown={onResizeMouseDown}
 					>
 						<SouthEastIcon />
+					</div>
+					<div className="absolute top-0 left-0 bg-white px-1 py-0.5 text-xs">
+						{resolutionLabel}
 					</div>
 				</div>
 			</div>
