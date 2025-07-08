@@ -1,14 +1,38 @@
-# React Image Uploader
+## ✦ Features Overview
 
-This component is capable of uploading images using drag and drop or by selecting files from the file system. It supports multiple file uploads and provides a preview of the selected images.
-Besides preview it also provides a couple of other features:
-- **Image Resizing**: Automatically resizes images to a specified maximum width and height.
-- **Image Compression**: Compresses images to reduce file size while maintaining quality.
-- **Image Rotation**: Allows rotating images before uploading.
-- **Image Cropping**: Provides a cropping tool to adjust the image before uploading.
-- **Image Upload Progress**: Shows the progress of the image upload.
-- **Image Upload Error Handling**: Handles errors during image upload and provides feedback to the user.
-- **Image Upload Success Handling**: Provides feedback to the user upon successful upload.
-- **Image Upload Cancelation**: Allows users to cancel the upload process.
-- **Image Upload Retry**: Provides an option to retry failed uploads.
-- **Image Upload Sorting**: Allows users to sort uploaded images.
+This component enables image uploading through drag-and-drop or file selection. It supports multiple image uploads, real-time previews, and a range of image editing and upload handling features.
+
+---
+
+### 🖼️ Image Selection & Preview
+
+- ✅ **[DONE]** Multiple file upload via drag-and-drop and file system selection  
+- ✅ **[DONE]** Preview images before upload
+- ✅ **[DONE]** Remove uploaded image from preview list  
+
+---
+
+### ✂️ Image Editing
+
+- ✅ **[DONE]** Image Cropping with adjustable aspect ratio
+- 🛠️ **[IN PROGRESS]** Image Resizing (to max width and height)  
+- ⏳ **[TODO]** Image Compression (reduce file size while preserving quality)  
+- ⏳ **[TODO]** Image Rotation  
+
+---
+
+### ⏫ Upload Handling
+
+- ⏳ **[TODO]** Upload Progress Indicator (per image)  
+- ⏳ **[TODO]** Upload Error Handling (with user feedback)  
+- ⏳ **[TODO]** Upload Success Handling (confirmation feedback)  
+- ⏳ **[TODO]** Upload Cancelation  
+- ⏳ **[TODO]** Retry for Failed Uploads  
+
+---
+
+### 🧩 User Experience Enhancements
+
+- ⏳ **[TODO]** Image Sorting (drag to reorder or by metadata)  
+- ⏳ **[TODO]** Keyboard Accessibility  
+- ⏳ **[TODO]** Internationalization (i18n) support  
