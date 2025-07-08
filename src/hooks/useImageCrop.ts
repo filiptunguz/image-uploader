@@ -1,0 +1,172 @@
+import { type MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from 'react';
+import { type Crop, cropImageFile } from '../utils/cropImageFile.ts';
+
+const defaultCrop: Crop = { x: 0, y: 0, width: 0, height: 0, canvasWidth: 0 };
+
+export const useImageCrop = (file: File, canvasWidth: number, keepAspectRatio?: number | true) => {
+	const [crop, setCrop] = useState<Crop>(defaultCrop);
+	const [resizing, setResizing] = useState(false);
+	const [resizeStart, setResizeStart] = useState<Crop>(defaultCrop);
+	const [moving, setMoving] = useState(false);
+	const [moveLastPoint, setMoveLastPoint] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+
+	const canvasRef = useRef<HTMLCanvasElement | null>(null);
+	const containerRef = useRef<HTMLDivElement | null>(null);
+	const imgWidthRef = useRef<number>(0);
+
+	useEffect(() => {
+		if (!canvasRef.current || !containerRef.current) return;
+
+		const url = URL.createObjectURL(file);
+		const canvas = canvasRef.current;
+		const ctx = canvas.getContext('2d');
+		if (!ctx) return;
+
+		const img = new Image();
+
+		img.onload = () => {
+			// set the image original width
+			if (!imgWidthRef.current) imgWidthRef.current = img.width;
+
+			// get image aspect ratio
+			const aspectRatio = img.width / img.height;
+
+			canvas.width = img.width = canvasWidth;
+			canvas.height = img.height = canvasWidth / aspectRatio;
+
+			if (typeof keepAspectRatio === 'number' && keepAspectRatio > 0) {
+				const currentWidth = canvas.width;
+				const currentHeight = canvas.height;
+
+				const isWidthReference = currentWidth <= currentHeight;
+
+				const newWidth = isWidthReference ? currentWidth : currentHeight * keepAspectRatio;
+				const newHeight = isWidthReference ? currentWidth / keepAspectRatio : currentHeight;
+
+				setCrop({
+					x: isWidthReference ? 0 : (currentWidth - newWidth) / 2,
+					y: isWidthReference ? (currentHeight - newHeight) / 2 : 0,
+					width: newWidth,
+					height: newHeight,
+					canvasWidth,
+				});
+			} else {
+				setCrop({
+					x: 0,
+					y: 0,
+					width: img.width,
+					height: img.height,
+					canvasWidth,
+				});
+			}
+
+			ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+			containerRef.current!.style.display = 'block'; // Show the canvas after drawing
+		};
+
+		img.src = url;
+
+		return () => {
+			URL.revokeObjectURL(url);
+		};
+	}, [file]);
+
+	const onResizeMouseDown = (e: ReactMouseEvent) => {
+		e.preventDefault();
+		setResizing(true);
+		setResizeStart({
+			x: e.clientX,
+			y: e.clientY,
+			width: crop.width,
+			height: crop.height,
+			canvasWidth,
+		});
+
+		addEventListener('mouseup', onMouseUp);
+	};
+
+	const onMoveMouseDown = (e: ReactMouseEvent) => {
+		e.preventDefault();
+		setMoving(true);
+		setMoveLastPoint({ x: e.clientX, y: e.clientY });
+
+		addEventListener('mouseup', onMouseUp);
+	};
+
+	const onMouseMove = (e: ReactMouseEvent) => {
+		if (resizing) {
+			const deltaX = e.clientX - resizeStart.x;
+
+			const aspectRatio =
+				keepAspectRatio === true
+					? canvasRef.current!.width / canvasRef.current!.height
+					: keepAspectRatio;
+
+			const maxWidth = containerRef.current!.clientWidth - crop.x;
+			const maxHeight = containerRef.current!.clientHeight - crop.y;
+
+			setCrop((prev) => {
+				const newWidth = Math.min(Math.max(20, resizeStart.width + deltaX), maxWidth); // Minimum width: 20px
+				return {
+					...prev,
+					width: newWidth, // Minimum width: 20px
+					height: Math.min(
+						aspectRatio
+							? newWidth / aspectRatio
+							: Math.max(20, resizeStart.height + (e.clientY - resizeStart.y)),
+						maxHeight,
+					),
+					canvasWidth,
+				};
+			});
+		} else if (moving) {
+			const deltaX = e.clientX - moveLastPoint.x;
+			const deltaY = e.clientY - moveLastPoint.y;
+
+			const maxX = containerRef.current!.clientWidth - crop.width;
+			const maxY = containerRef.current!.clientHeight - crop.height;
+
+			setCrop((prev) => ({
+				...prev,
+				x: Math.min(Math.max(0, prev.x + deltaX), maxX), // Prevent moving out of bounds
+				y: Math.min(Math.max(0, prev.y + deltaY), maxY),
+				canvasWidth,
+			}));
+
+			setMoveLastPoint({ x: e.clientX, y: e.clientY });
+		}
+	};
+
+	const onMouseUp = () => {
+		setResizing(false);
+		setMoving(false);
+
+		// remove event listeners
+		removeEventListener('mouseup', onMouseUp);
+	};
+
+	const onCrop = async () => {
+		if (!canvasRef.current) return;
+
+		const croppedBlob = await cropImageFile(file, crop);
+		const uploadableFile = new File([croppedBlob], file.name, { ...file });
+
+		const img = document.createElement('img');
+		img.src = URL.createObjectURL(uploadableFile);
+		document.body.appendChild(img); // For testing, append the cropped image to the body
+	};
+
+	const resolutionLabel = `${(crop.width * (imgWidthRef.current / canvasWidth)).toFixed()}px x ${(crop.height * (imgWidthRef.current / canvasWidth)).toFixed()}px`;
+
+	return {
+		crop,
+		canvasRef,
+		containerRef,
+		originalWidth: imgWidthRef.current,
+		onResizeMouseDown,
+		onMoveMouseDown,
+		onMouseMove,
+		onCrop,
+		resolutionLabel,
+	};
+};
