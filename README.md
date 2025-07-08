@@ -2,7 +2,9 @@
 
 This component enables image uploading through drag-and-drop or file selection. It supports multiple image uploads, real-time previews, and a range of image editing and upload handling features.
 
----
+--- 
+
+- ⏳ **[TODO]** Documentation  
 
 ### 🖼️ Image Selection & Preview
 
