@@ -89,6 +89,7 @@ export const useImageCrop = (file: File, canvasWidth: number, keepAspectRatio?: 
 	const onMouseMove = (e: ReactMouseEvent) => {
 		if (resizing) {
 			const deltaX = e.clientX - resizeStart.x;
+			const deltaY = e.clientY - resizeStart.y;
 
 			const aspectRatio =
 				keepAspectRatio === true
@@ -107,9 +108,9 @@ export const useImageCrop = (file: File, canvasWidth: number, keepAspectRatio?: 
 					newWidth = Math.min(Math.max(20, resizeStart.width + deltaX), maxWidth);
 					newHeight = aspectRatio
 						? newWidth / aspectRatio
-						: Math.min(Math.max(20, resizeStart.height + (e.clientY - resizeStart.y)), maxHeight);
+						: Math.min(Math.max(20, resizeStart.height + deltaY), maxHeight);
 				} else {
-					newHeight = Math.min(Math.max(20, resizeStart.height + deltaX), maxHeight);
+					newHeight = Math.min(Math.max(20, resizeStart.height + deltaY), maxHeight);
 					newWidth = aspectRatio
 						? newHeight * aspectRatio
 						: Math.min(Math.max(20, resizeStart.width + deltaX), maxWidth);
