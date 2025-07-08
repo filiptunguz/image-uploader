@@ -23,8 +23,8 @@ export default function ImageUploader(props: ImageUploaderProps) {
 	return (
 		<div
 			className={cn(
-				'text-gray-500 rounded-3xl p-6 border border-gray-500 hover:bg-gray-100 hover:text-gray-400 cursor-pointer transition-colors',
-				isDragging && 'bg-gray-100 border-dashed',
+				'text-primary bg-secondary/40 rounded-3xl p-6 border border-secondary hover:bg-secondary/70 hover:text-primary/80 cursor-pointer transition-colors',
+				isDragging && 'bg-secondary/70 border-dashed',
 				props.className,
 			)}
 			onDragOver={handleDragOver}

@@ -31,7 +31,7 @@ export default function SimpleImagePreviewer({ gridColumns = 4, ...props }: Imag
 					<div
 						key={index}
 						className={cn(
-							'flex-shrink-0 size-[200px] border border-gray-400 rounded-lg',
+							'flex-shrink-0 size-[200px] border-4 border-secondary rounded-3xl overflow-hidden bg-secondary/40',
 							props.cardClassName,
 							(props.onRemove || props.onEditClick) && 'relative group',
 						)}
@@ -39,7 +39,7 @@ export default function SimpleImagePreviewer({ gridColumns = 4, ...props }: Imag
 						{props.onRemove &&
 							(props.removeIcon ?? (
 								<div
-									className="absolute  top-1 right-1 text-gray-800 cursor-pointer hover:text-gray-400 transition-colors"
+									className="absolute  top-2 right-2 text-gray-600 mix-blend-plus-lighter cursor-pointer hover:text-gray-400 transition-colors"
 									onClick={() => props.onRemove!(file)}
 								>
 									<CloseIcon />
@@ -54,7 +54,7 @@ export default function SimpleImagePreviewer({ gridColumns = 4, ...props }: Imag
 						{props.onEditClick &&
 							(props.editIcon ?? (
 								<div
-									className="absolute  bottom-1 right-1 text-gray-800 opacity-0 cursor-pointer group-hover:opacity-100 hover:text-gray-400 transition-[opacity,text-color]"
+									className="absolute  bottom-2 right-1 text-gray-600 mix-blend-plus-lighter opacity-0 cursor-pointer transition-[opacity,color] group-hover:opacity-100 hover:text-gray-400"
 									onClick={() => props.onEditClick!(file)}
 								>
 									<EditIcon />
