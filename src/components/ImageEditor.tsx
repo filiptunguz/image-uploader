@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent } from 'react';
 import { SouthEastIcon } from '../icons/DefaultIcons.tsx';
+import { type Crop, cropImageFile } from '../utils/cropImageFile.ts';
 
 type ImageEditorProps = {
 	file: File;
@@ -7,14 +8,7 @@ type ImageEditorProps = {
 	keepAspectRatio?: boolean;
 };
 
-type Crop = {
-	x: number;
-	y: number;
-	width: number;
-	height: number;
-};
-
-const defaultCrop: Crop = { x: 0, y: 0, width: 0, height: 0 };
+const defaultCrop: Crop = { x: 0, y: 0, width: 0, height: 0, canvasWidth: 0 };
 
 export default function ImageEditor({ canvasWidth = 500, ...props }: ImageEditorProps) {
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -48,6 +42,7 @@ export default function ImageEditor({ canvasWidth = 500, ...props }: ImageEditor
 				y: 0,
 				width: img.width,
 				height: img.height,
+				canvasWidth,
 			});
 
 			ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
@@ -64,7 +59,13 @@ export default function ImageEditor({ canvasWidth = 500, ...props }: ImageEditor
 	const onResizeMouseDown = (e: ReactMouseEvent) => {
 		e.preventDefault();
 		setResizing(true);
-		setResizeStart({ x: e.clientX, y: e.clientY, width: crop.width, height: crop.height });
+		setResizeStart({
+			x: e.clientX,
+			y: e.clientY,
+			width: crop.width,
+			height: crop.height,
+			canvasWidth,
+		});
 
 		addEventListener('mouseup', onMouseUp);
 	};
@@ -93,6 +94,7 @@ export default function ImageEditor({ canvasWidth = 500, ...props }: ImageEditor
 						: Math.max(20, resizeStart.height + (e.clientY - resizeStart.y)),
 					maxHeight,
 				),
+				canvasWidth,
 			}));
 		} else if (moving) {
 			const deltaX = e.clientX - moveLastPoint.x;
@@ -105,6 +107,7 @@ export default function ImageEditor({ canvasWidth = 500, ...props }: ImageEditor
 				...prev,
 				x: Math.min(Math.max(0, prev.x + deltaX), maxX), // Prevent moving out of bounds
 				y: Math.min(Math.max(0, prev.y + deltaY), maxY),
+				canvasWidth,
 			}));
 
 			setMoveLastPoint({ x: e.clientX, y: e.clientY });
@@ -117,6 +120,17 @@ export default function ImageEditor({ canvasWidth = 500, ...props }: ImageEditor
 
 		// remove event listeners
 		removeEventListener('mouseup', onMouseUp);
+	};
+
+	const onCrop = async () => {
+		if (!canvasRef.current) return;
+
+		const croppedBlob = await cropImageFile(file, crop);
+		const uploadableFile = new File([croppedBlob], file.name, { ...file });
+
+		const img = document.createElement('img');
+		img.src = URL.createObjectURL(uploadableFile);
+		document.body.appendChild(img); // For testing, append the cropped image to the body
 	};
 
 	return (
@@ -144,6 +158,7 @@ export default function ImageEditor({ canvasWidth = 500, ...props }: ImageEditor
 					</div>
 				</div>
 			</div>
+			<button onClick={onCrop}>crop2</button>
 		</>
 	);
 }
