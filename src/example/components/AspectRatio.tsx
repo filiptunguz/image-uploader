@@ -31,7 +31,25 @@ const aspectRatios: AspectRatioOption[] = [
 	{ value: '9:16', ratio: [9, 16] },
 ];
 
-export default function AspectRatio() {
+function getSimplestAspectRatio(width: number, height: number): [number, number] {
+	// Round both numbers to remove floating-point inaccuracies
+	const roundedWidth = Math.round(width);
+	const roundedHeight = Math.round(height);
+
+	// Helper function to calculate GCD
+	function gcd(a: number, b: number): number {
+		return b === 0 ? a : gcd(b, a % b);
+	}
+
+	const divisor = gcd(roundedWidth, roundedHeight);
+	return [roundedWidth / divisor, roundedHeight / divisor];
+}
+
+export default function AspectRatio({
+	originalAspectRatio,
+}: {
+	originalAspectRatio: [number, number];
+}) {
 	const [selectedValue, setSelectedValue] = useState<AspectRatioValue>('free');
 	const [[width, height], setDimensions] = useState<[number, number]>([0, 0]);
 
@@ -60,8 +78,12 @@ export default function AspectRatio() {
 		const value = event.target.value as AspectRatioValue;
 		setSelectedValue(value);
 
-		const matchingRatio = aspectRatios.find((opt) => opt.value === value)!.ratio;
-		setDimensions(matchingRatio ?? [0, 0]);
+		if (value === 'original')
+			setDimensions(getSimplestAspectRatio(originalAspectRatio[0], originalAspectRatio[1]));
+		else {
+			const matchingRatio = aspectRatios.find((opt) => opt.value === value)!.ratio;
+			setDimensions(matchingRatio ?? [0, 0]);
+		}
 	};
 
 	return (

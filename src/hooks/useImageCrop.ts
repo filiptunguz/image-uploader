@@ -149,7 +149,11 @@ export const useImageCrop = (file: File, canvasWidth: number, keepAspectRatio?: 
 	};
 
 	// Resolution label shown to user (real px dimensions)
-	const resolutionLabel = `${Math.round(crop.width * (imgWidthRef.current / canvasWidth))}px x ${Math.round(crop.height * (imgWidthRef.current / canvasWidth))}px`;
+	const originalAspectRatio: [number, number] = [
+		Math.round(crop.width * (imgWidthRef.current / canvasWidth)),
+		Math.round(crop.height * (imgWidthRef.current / canvasWidth)),
+	];
+	const resolutionLabel = `${originalAspectRatio[0]}px x ${originalAspectRatio[1]}px`;
 
 	return {
 		crop,
@@ -160,6 +164,7 @@ export const useImageCrop = (file: File, canvasWidth: number, keepAspectRatio?: 
 		onMoveMouseDown,
 		onMouseMove,
 		onCrop: async () => await cropImageFile(file, crop),
+		originalAspectRatio,
 		resolutionLabel,
 	};
 };

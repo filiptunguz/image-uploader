@@ -19,7 +19,7 @@ export default function SimpleImageCropper({ file }: { file: File }) {
 
 	return (
 		<>
-			<AspectRatio />
+			<AspectRatio originalAspectRatio={data.originalAspectRatio} />
 			<SimpleImageEditor {...data} />
 			<button onClick={handleOnCrop} className="cursor-pointer rounded-full px-4 py-2 bg-primary">
 				Apply
