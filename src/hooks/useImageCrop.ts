@@ -139,8 +139,10 @@ export const useImageCrop = (
 				const centerX = containerRef.current!.clientWidth / 2;
 				const centerY = containerRef.current!.clientHeight / 2;
 
-				const isCloseToCenterX = Math.abs(x + width / 2 - centerX) < snapToCenterThreshold;
-				const isCloseToCenterY = Math.abs(y + height / 2 - centerY) < snapToCenterThreshold;
+				const isCloseToCenterX =
+					Math.abs(x + width / 2 - centerX) < (resizing ? 1.5 : snapToCenterThreshold);
+				const isCloseToCenterY =
+					Math.abs(y + height / 2 - centerY) < (resizing ? 1.5 : snapToCenterThreshold);
 
 				if (isCloseToCenterX != showVerticalSnapLine) setShowVerticalSnapLine(isCloseToCenterX);
 				if (isCloseToCenterY != showHorizontalSnapLine) setShowHorizontalSnapLine(isCloseToCenterY);
