@@ -6,7 +6,7 @@ import AspectRatioForm from './AspectRatioForm.tsx';
 export default function SimpleImageCropper({ file }: { file: File }) {
 	const [aspectRatio, setAspectRatio] = useState<number | true | undefined>();
 
-	const { onCrop, ...data } = useImageCrop(file, 500, aspectRatio);
+	const { onCrop, ...data } = useImageCrop(file, 500, aspectRatio, true);
 	const [url, setUrl] = useState<string | null>(null);
 
 	const handleOnCrop = async () => {

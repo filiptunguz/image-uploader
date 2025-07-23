@@ -1,16 +1,26 @@
 import { type MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from 'react';
 import { type Crop, cropImageFile } from '../utils/cropImageFile.ts';
 
+const SNAP_THRESHOLD = 15; // pixels
+
 // Default crop state
 const defaultCrop: Crop = { x: 0, y: 0, width: 0, height: 0, canvasWidth: 0 };
 
 // Hook to manage image cropping interaction logic
-export const useImageCrop = (file: File, canvasWidth: number, keepAspectRatio?: number | true) => {
+export const useImageCrop = (
+	file: File,
+	canvasWidth: number,
+	keepAspectRatio?: number | true,
+	snapToCenter?: boolean,
+) => {
 	const [crop, setCrop] = useState<Crop>(defaultCrop);
 	const [resizing, setResizing] = useState(false);
 	const [resizeStart, setResizeStart] = useState<Crop>(defaultCrop);
 	const [moving, setMoving] = useState(false);
 	const [moveLastPoint, setMoveLastPoint] = useState({ x: 0, y: 0 });
+	const [showHorizontalSnapLine, setShowHorizontalSnapLine] = useState(false);
+	const [showVerticalSnapLine, setShowVerticalSnapLine] = useState(false);
+	const [virtualMove, setVirtualMove] = useState({ x: 0, y: 0 });
 
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
 	const containerRef = useRef<HTMLDivElement | null>(null);
@@ -120,6 +130,34 @@ export const useImageCrop = (file: File, canvasWidth: number, keepAspectRatio?: 
 
 	// Handle crop movement or resizing
 	const onMouseMove = (e: ReactMouseEvent) => {
+		const shouldSnapToCenter = (
+			width: number,
+			height: number,
+			x: number,
+			y: number,
+			resizing?: boolean,
+		) => {
+			if (snapToCenter) {
+				const centerX = containerRef.current!.clientWidth / 2;
+				const centerY = containerRef.current!.clientHeight / 2;
+
+				const isCloseToCenterX = Math.abs(x + width / 2 - centerX) < SNAP_THRESHOLD;
+				const isCloseToCenterY = Math.abs(y + height / 2 - centerY) < SNAP_THRESHOLD;
+
+				if (isCloseToCenterX != showVerticalSnapLine) setShowVerticalSnapLine(isCloseToCenterX);
+				if (isCloseToCenterY != showHorizontalSnapLine) setShowHorizontalSnapLine(isCloseToCenterY);
+
+				if (resizing) return { x, y };
+
+				return {
+					x: isCloseToCenterX ? centerX - width / 2 : x,
+					y: isCloseToCenterY ? centerY - height / 2 : y,
+				};
+			}
+
+			return { x, y };
+		};
+
 		if (resizing) {
 			const deltaX = e.clientX - resizeStart.x;
 			const deltaY = e.clientY - resizeStart.y;
@@ -132,30 +170,32 @@ export const useImageCrop = (file: File, canvasWidth: number, keepAspectRatio?: 
 			const maxWidth = containerRef.current!.clientWidth - crop.x;
 			const maxHeight = containerRef.current!.clientHeight - crop.y;
 
-			setCrop((prev) => {
-				let newWidth;
-				let newHeight;
+			let newWidth;
+			let newHeight;
 
-				const isWidthReference = canvasRef.current!.clientWidth <= canvasRef.current!.clientHeight;
-				if (isWidthReference) {
-					newWidth = Math.min(Math.max(20, resizeStart.width + deltaX), maxWidth);
-					newHeight = aspectRatio
-						? newWidth / aspectRatio
-						: Math.min(Math.max(20, resizeStart.height + deltaY), maxHeight);
-				} else {
-					newHeight = Math.min(Math.max(20, resizeStart.height + deltaY), maxHeight);
-					newWidth = aspectRatio
-						? newHeight * aspectRatio
-						: Math.min(Math.max(20, resizeStart.width + deltaX), maxWidth);
-				}
+			const isWidthReference = canvasRef.current!.clientWidth <= canvasRef.current!.clientHeight;
+			if (isWidthReference) {
+				newWidth = Math.min(Math.max(20, resizeStart.width + deltaX), maxWidth);
+				newHeight = aspectRatio
+					? newWidth / aspectRatio
+					: Math.min(Math.max(20, resizeStart.height + deltaY), maxHeight);
+			} else {
+				newHeight = Math.min(Math.max(20, resizeStart.height + deltaY), maxHeight);
+				newWidth = aspectRatio
+					? newHeight * aspectRatio
+					: Math.min(Math.max(20, resizeStart.width + deltaX), maxWidth);
+			}
 
-				return {
-					...prev,
-					width: newWidth,
-					height: newHeight,
-					canvasWidth,
-				};
-			});
+			const { x, y } = shouldSnapToCenter(newWidth, newHeight, crop.x, crop.y, true);
+
+			setCrop((prev) => ({
+				...prev,
+				x,
+				y,
+				width: newWidth,
+				height: newHeight,
+				canvasWidth,
+			}));
 		} else if (moving) {
 			const deltaX = e.clientX - moveLastPoint.x;
 			const deltaY = e.clientY - moveLastPoint.y;
@@ -163,10 +203,32 @@ export const useImageCrop = (file: File, canvasWidth: number, keepAspectRatio?: 
 			const maxX = containerRef.current!.clientWidth - crop.width;
 			const maxY = containerRef.current!.clientHeight - crop.height;
 
+			const newX = Math.min(Math.max(0, crop.x + deltaX), maxX);
+			const newY = Math.min(Math.max(0, crop.y + deltaY), maxY);
+			let { x, y } = shouldSnapToCenter(crop.width, crop.height, newX, newY);
+			if (newX !== x || newY !== y) {
+				const newVirtualMove = {
+					x: newX !== x ? virtualMove.x + (newX - x) : virtualMove.x,
+					y: newY !== y ? virtualMove.y + (newY - y) : virtualMove.y,
+				};
+
+				if (Math.abs(newVirtualMove.x) > SNAP_THRESHOLD) {
+					x += newVirtualMove.x;
+					newVirtualMove.x = 0; // Reset virtual move after applying
+				}
+
+				if (Math.abs(newVirtualMove.y) > SNAP_THRESHOLD) {
+					y += newVirtualMove.y;
+					newVirtualMove.y = 0; // Reset virtual move after applying
+				}
+
+				setVirtualMove(newVirtualMove);
+			}
+
 			setCrop((prev) => ({
 				...prev,
-				x: Math.min(Math.max(0, prev.x + deltaX), maxX),
-				y: Math.min(Math.max(0, prev.y + deltaY), maxY),
+				x,
+				y,
 				canvasWidth,
 			}));
 
@@ -178,6 +240,8 @@ export const useImageCrop = (file: File, canvasWidth: number, keepAspectRatio?: 
 	const onMouseUp = () => {
 		setResizing(false);
 		setMoving(false);
+		if (snapToCenter && showHorizontalSnapLine) setShowHorizontalSnapLine(false);
+		if (snapToCenter && showVerticalSnapLine) setShowVerticalSnapLine(false);
 		window.removeEventListener('mouseup', onMouseUp);
 	};
 
