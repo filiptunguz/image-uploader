@@ -258,5 +258,7 @@ export const useImageCrop = (
 		onCrop: async () => await cropImageFile(file, crop),
 		originalSize: originalSizeRef.current,
 		resolutionLabel,
+		showVerticalSnapLine,
+		showHorizontalSnapLine,
 	};
 };
