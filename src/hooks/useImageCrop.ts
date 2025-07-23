@@ -14,7 +14,7 @@ export const useImageCrop = (file: File, canvasWidth: number, keepAspectRatio?: 
 
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
 	const containerRef = useRef<HTMLDivElement | null>(null);
-	const imgWidthRef = useRef<number>(0); // Stores the original image width
+	const originalSizeRef = useRef<[number, number]>([0, 0]); // Stores the original image width
 
 	// Load and draw the image on mount or file change
 	useEffect(() => {
@@ -30,7 +30,7 @@ export const useImageCrop = (file: File, canvasWidth: number, keepAspectRatio?: 
 		img.onload = () => {
 			URL.revokeObjectURL(url); // Cleanup previous URL
 
-			imgWidthRef.current = img.width;
+			originalSizeRef.current = [img.width, img.height];
 
 			const aspectRatio = img.width / img.height;
 
@@ -66,6 +66,39 @@ export const useImageCrop = (file: File, canvasWidth: number, keepAspectRatio?: 
 
 		img.src = url;
 	}, [file]);
+
+	const setCropByAspectRatio = (aspectRatio: number) => {
+		const originalAspectRatio = originalSizeRef.current[0] / originalSizeRef.current[1];
+
+		let newWidth, newHeight;
+		if (aspectRatio >= originalAspectRatio) {
+			// fit the width of the original image
+			newWidth = canvasWidth;
+			newHeight = canvasWidth / aspectRatio;
+		} else {
+			// fit the height of the original image
+			newHeight = canvasWidth / originalAspectRatio;
+			newWidth = newHeight * aspectRatio;
+		}
+
+		setCrop((prev) => ({
+			...prev,
+			x: (canvasWidth - newWidth) / 2,
+			y: (canvasRef.current!.height - newHeight) / 2,
+			width: newWidth,
+			height: newHeight,
+			canvasWidth,
+		}));
+	};
+
+	useEffect(() => {
+		if (keepAspectRatio) {
+			if (keepAspectRatio === true) {
+				// use original aspect ratio if keepAspectRatio is true
+				setCropByAspectRatio(originalSizeRef.current[0] / originalSizeRef.current[1]);
+			} else setCropByAspectRatio(keepAspectRatio);
+		}
+	}, [keepAspectRatio]);
 
 	// Begin resizing on mouse down
 	const onResizeMouseDown = (e: ReactMouseEvent) => {
@@ -149,22 +182,17 @@ export const useImageCrop = (file: File, canvasWidth: number, keepAspectRatio?: 
 	};
 
 	// Resolution label shown to user (real px dimensions)
-	const originalAspectRatio: [number, number] = [
-		Math.round(crop.width * (imgWidthRef.current / canvasWidth)),
-		Math.round(crop.height * (imgWidthRef.current / canvasWidth)),
-	];
-	const resolutionLabel = `${originalAspectRatio[0]}px x ${originalAspectRatio[1]}px`;
+	const resolutionLabel = `${Math.round(crop.width * (originalSizeRef.current[0] / canvasWidth))}px x ${Math.round(crop.height * (originalSizeRef.current[0] / canvasWidth))}px`;
 
 	return {
 		crop,
 		canvasRef,
 		containerRef,
-		originalWidth: imgWidthRef.current,
 		onResizeMouseDown,
 		onMoveMouseDown,
 		onMouseMove,
 		onCrop: async () => await cropImageFile(file, crop),
-		originalAspectRatio,
+		originalSize: originalSizeRef.current,
 		resolutionLabel,
 	};
 };

@@ -1,10 +1,12 @@
 import { useImageCrop } from '../../hooks/useImageCrop.ts';
 import SimpleImageEditor from './SimpleImageEditor.tsx';
 import { useState } from 'react';
-import AspectRatio from './AspectRatio.tsx';
+import AspectRatioForm from './AspectRatioForm.tsx';
 
 export default function SimpleImageCropper({ file }: { file: File }) {
-	const { onCrop, ...data } = useImageCrop(file, 500);
+	const [aspectRatio, setAspectRatio] = useState<number | true | undefined>();
+
+	const { onCrop, ...data } = useImageCrop(file, 500, aspectRatio);
 	const [url, setUrl] = useState<string | null>(null);
 
 	const handleOnCrop = async () => {
@@ -19,7 +21,7 @@ export default function SimpleImageCropper({ file }: { file: File }) {
 
 	return (
 		<>
-			<AspectRatio originalAspectRatio={data.originalAspectRatio} />
+			<AspectRatioForm originalSize={data.originalSize} onChange={setAspectRatio} />
 			<SimpleImageEditor {...data} />
 			<button onClick={handleOnCrop} className="cursor-pointer rounded-full px-4 py-2 bg-primary">
 				Apply

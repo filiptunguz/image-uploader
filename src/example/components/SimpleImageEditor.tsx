@@ -22,7 +22,7 @@ export default function SimpleImageEditor(props: SimpleImageEditorProps) {
 			>
 				<canvas ref={props.canvasRef} />
 				<div
-					className="absolute top-0 left-0 resize border-primary border-[3px] h-full w-full rounded-3xl overflow-hidden"
+					className="absolute top-0 left-0 border-primary border-[3px] h-full w-full rounded-3xl overflow-hidden"
 					onMouseDown={props.onMoveMouseDown}
 					style={{
 						width: `${props.crop.width}px`,

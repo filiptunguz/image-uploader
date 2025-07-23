@@ -45,11 +45,12 @@ function getSimplestAspectRatio(width: number, height: number): [number, number]
 	return [roundedWidth / divisor, roundedHeight / divisor];
 }
 
-export default function AspectRatio({
-	originalAspectRatio,
-}: {
-	originalAspectRatio: [number, number];
-}) {
+type AspectRatioFormProps = {
+	originalSize: [number, number];
+	onChange: (ratio?: number | true) => void;
+};
+
+export default function AspectRatioForm({ originalSize, onChange }: AspectRatioFormProps) {
 	const [selectedValue, setSelectedValue] = useState<AspectRatioValue>('free');
 	const [[width, height], setDimensions] = useState<[number, number]>([0, 0]);
 
@@ -71,18 +72,24 @@ export default function AspectRatio({
 			);
 
 			setSelectedValue(matchingOption ? matchingOption.value : 'custom');
-		} else setSelectedValue('free');
+			onChange(width / height);
+		} else {
+			setSelectedValue('free');
+			onChange(); // Reset aspect ratio when dimensions are invalid
+		}
 	};
 
 	const onSelectChange = (event: ChangeEvent<HTMLSelectElement>) => {
 		const value = event.target.value as AspectRatioValue;
 		setSelectedValue(value);
 
-		if (value === 'original')
-			setDimensions(getSimplestAspectRatio(originalAspectRatio[0], originalAspectRatio[1]));
-		else {
+		if (value === 'original') {
+			setDimensions(getSimplestAspectRatio(originalSize[0], originalSize[1]));
+			onChange(true);
+		} else {
 			const matchingRatio = aspectRatios.find((opt) => opt.value === value)!.ratio;
 			setDimensions(matchingRatio ?? [0, 0]);
+			onChange(matchingRatio ? matchingRatio[0] / matchingRatio[1] : undefined);
 		}
 	};
 
