@@ -240,8 +240,8 @@ export const useImageCrop = (
 	const onMouseUp = () => {
 		setResizing(false);
 		setMoving(false);
-		if (snapToCenter && showHorizontalSnapLine) setShowHorizontalSnapLine(false);
-		if (snapToCenter && showVerticalSnapLine) setShowVerticalSnapLine(false);
+		if (snapToCenter) setShowHorizontalSnapLine(false);
+		if (snapToCenter) setShowVerticalSnapLine(false);
 		window.removeEventListener('mouseup', onMouseUp);
 	};
 
