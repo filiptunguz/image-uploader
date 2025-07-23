@@ -10,6 +10,8 @@ type SimpleImageEditorProps = {
 	onMoveMouseDown: (event: ReactMouseEvent) => void;
 	onResizeMouseDown: (event: ReactMouseEvent) => void;
 	resolutionLabel: string;
+	showHorizontalSnapLine: boolean;
+	showVerticalSnapLine: boolean;
 };
 
 export default function SimpleImageEditor(props: SimpleImageEditorProps) {
@@ -40,6 +42,12 @@ export default function SimpleImageEditor(props: SimpleImageEditorProps) {
 						{props.resolutionLabel}
 					</div>
 				</div>
+				{props.showVerticalSnapLine && (
+					<div className="absolute left-1/2 top-0 transform -translate-x-1/2 h-full w-[1px] opacity-80 bg-primary" />
+				)}
+				{props.showHorizontalSnapLine && (
+					<div className="absolute left-0 top-1/2 transform -translate-y-1/2 h-[1px] opacity-80 w-full bg-primary" />
+				)}
 			</div>
 		</>
 	);
