@@ -1,8 +1,6 @@
 import { type MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from 'react';
 import { type Crop, cropImageFile } from '../utils/cropImageFile.ts';
 
-const SNAP_THRESHOLD = 15; // pixels
-
 // Default crop state
 const defaultCrop: Crop = { x: 0, y: 0, width: 0, height: 0, canvasWidth: 0 };
 
@@ -11,7 +9,7 @@ export const useImageCrop = (
 	file: File,
 	canvasWidth: number,
 	keepAspectRatio?: number | true,
-	snapToCenter?: boolean,
+	snapToCenterThreshold?: number,
 ) => {
 	const [crop, setCrop] = useState<Crop>(defaultCrop);
 	const [resizing, setResizing] = useState(false);
@@ -137,12 +135,12 @@ export const useImageCrop = (
 			y: number,
 			resizing?: boolean,
 		) => {
-			if (snapToCenter) {
+			if (snapToCenterThreshold) {
 				const centerX = containerRef.current!.clientWidth / 2;
 				const centerY = containerRef.current!.clientHeight / 2;
 
-				const isCloseToCenterX = Math.abs(x + width / 2 - centerX) < SNAP_THRESHOLD;
-				const isCloseToCenterY = Math.abs(y + height / 2 - centerY) < SNAP_THRESHOLD;
+				const isCloseToCenterX = Math.abs(x + width / 2 - centerX) < snapToCenterThreshold;
+				const isCloseToCenterY = Math.abs(y + height / 2 - centerY) < snapToCenterThreshold;
 
 				if (isCloseToCenterX != showVerticalSnapLine) setShowVerticalSnapLine(isCloseToCenterX);
 				if (isCloseToCenterY != showHorizontalSnapLine) setShowHorizontalSnapLine(isCloseToCenterY);
@@ -205,19 +203,20 @@ export const useImageCrop = (
 
 			const newX = Math.min(Math.max(0, crop.x + deltaX), maxX);
 			const newY = Math.min(Math.max(0, crop.y + deltaY), maxY);
+
 			let { x, y } = shouldSnapToCenter(crop.width, crop.height, newX, newY);
-			if (newX !== x || newY !== y) {
+			if (snapToCenterThreshold && (newX !== x || newY !== y)) {
 				const newVirtualMove = {
 					x: newX !== x ? virtualMove.x + (newX - x) : virtualMove.x,
 					y: newY !== y ? virtualMove.y + (newY - y) : virtualMove.y,
 				};
 
-				if (Math.abs(newVirtualMove.x) > SNAP_THRESHOLD) {
+				if (Math.abs(newVirtualMove.x) > snapToCenterThreshold) {
 					x += newVirtualMove.x;
 					newVirtualMove.x = 0; // Reset virtual move after applying
 				}
 
-				if (Math.abs(newVirtualMove.y) > SNAP_THRESHOLD) {
+				if (Math.abs(newVirtualMove.y) > snapToCenterThreshold) {
 					y += newVirtualMove.y;
 					newVirtualMove.y = 0; // Reset virtual move after applying
 				}
@@ -240,8 +239,8 @@ export const useImageCrop = (
 	const onMouseUp = () => {
 		setResizing(false);
 		setMoving(false);
-		if (snapToCenter) setShowHorizontalSnapLine(false);
-		if (snapToCenter) setShowVerticalSnapLine(false);
+		if (snapToCenterThreshold) setShowHorizontalSnapLine(false);
+		if (snapToCenterThreshold) setShowVerticalSnapLine(false);
 		window.removeEventListener('mouseup', onMouseUp);
 	};
 
