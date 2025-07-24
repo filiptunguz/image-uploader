@@ -1,4 +1,3 @@
-import { cn } from '../utils';
 import type { ReactNode } from 'react';
 import { CloseIcon, EditIcon } from '../icons/DefaultIcons';
 
@@ -20,7 +19,7 @@ export default function SimpleImagePreviewer({ gridColumns = 4, ...props }: Imag
 
 	return (
 		<div
-			className={cn('grid gap-4 max-w-full p-4', props.containerClassName)}
+			className="grid gap-4 max-w-full p-4"
 			style={{
 				gridTemplateColumns: `repeat(${gridColumns}, minmax(0, 1fr))`,
 			}}
@@ -30,11 +29,7 @@ export default function SimpleImagePreviewer({ gridColumns = 4, ...props }: Imag
 				return (
 					<div
 						key={index}
-						className={cn(
-							'flex-shrink-0 size-[200px] border-4 border-secondary rounded-3xl overflow-hidden bg-secondary/40',
-							props.cardClassName,
-							(props.onRemove || props.onEditClick) && 'relative group',
-						)}
+						className={`flex-shrink-0 size-[200px] border-4 border-secondary rounded-3xl overflow-hidden bg-secondary/40${props.onRemove || props.onEditClick ? 'relative group' : ''}`}
 					>
 						{props.onRemove &&
 							(props.removeIcon ?? (
@@ -48,7 +43,7 @@ export default function SimpleImagePreviewer({ gridColumns = 4, ...props }: Imag
 						<img
 							src={url}
 							alt={`Preview ${index}`}
-							className={cn('w-full h-full object-contain', props.imageClassName)}
+							className="w-full h-full object-contain"
 							onLoad={() => URL.revokeObjectURL(url)} // Clean up memory
 						/>
 						{props.onEditClick &&
