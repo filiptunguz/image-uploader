@@ -1,8 +1,7 @@
 {
-  "name": "@image-uploader/core",
+  "name": "@image-uploader/demo-app",
   "private": true,
   "version": "1.0.0",
-  "main": "src/index.js",
   "type": "module",
   "scripts": {
     "dev": "vite",

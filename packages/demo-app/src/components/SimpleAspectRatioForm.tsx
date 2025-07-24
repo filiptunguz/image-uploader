@@ -1,5 +1,5 @@
 import { type ChangeEvent, useState } from 'react';
-import Input from './Input.tsx';
+import Input from './ui/Input';
 
 type AspectRatioOption = {
 	value: AspectRatioValue;
@@ -50,7 +50,7 @@ type AspectRatioFormProps = {
 	onChange: (ratio?: number | true) => void;
 };
 
-export default function AspectRatioForm({ originalSize, onChange }: AspectRatioFormProps) {
+export default function SimpleAspectRatioForm({ originalSize, onChange }: AspectRatioFormProps) {
 	const [selectedValue, setSelectedValue] = useState<AspectRatioValue>('free');
 	const [[width, height], setDimensions] = useState<[number, number]>([0, 0]);
 

@@ -1,10 +1,11 @@
-import ImageUploader from '../components/ImageUploader.tsx';
-import SimpleImagePreviewer from './components/SimpleImagePreviewer.tsx';
-import SimpleImageCropper from './components/SimpleImageCropper.tsx';
-import { useImageFiles } from '../hooks/useImageFiles.ts';
+import { ImageUploader } from '@image-uploader/image-upload';
+import SimpleImageCropper from './components/SimpleImageCropper';
+import { useImageFiles } from './hooks/useImageFiles';
+import SimpleImagePreviewer from './components/SimpleImagePreviewer';
 
 export default function App() {
 	const { files, setFiles, setFileToEdit, fileToEdit, removeFile } = useImageFiles();
+	console.log('App files');
 
 	return (
 		<div className="flex justify-center items-center min-h-screen p-4 bg-background flex-col gap-8">

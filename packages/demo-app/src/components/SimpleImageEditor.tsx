@@ -1,6 +1,6 @@
-import { SouthEastIcon } from '../../icons/DefaultIcons.tsx';
+import { SouthEastIcon } from '../icons/DefaultIcons.tsx';
 import type { MouseEvent as ReactMouseEvent, RefObject } from 'react';
-import type { Crop } from '../../utils/cropImageFile.ts';
+import type { Crop } from '../utils/cropImageFile.ts';
 
 type SimpleImageEditorProps = {
 	crop: Crop;

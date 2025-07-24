@@ -1,4 +1,4 @@
-import { cn } from '../utils/utils.ts';
+import { cn } from '../utils/cn.ts';
 import { useImageUpload } from '../hooks/useImageUpload.ts';
 import { UploadIcon } from '../icons/DefaultIcons.tsx';
 
@@ -8,7 +8,7 @@ type ImageUploaderProps = {
 	className?: string;
 };
 
-export default function ImageUploader(props: ImageUploaderProps) {
+export function ImageUploader(props: ImageUploaderProps) {
 	const {
 		inputRef,
 		isDragging,

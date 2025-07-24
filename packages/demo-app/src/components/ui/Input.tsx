@@ -1,5 +1,5 @@
 import type { InputHTMLAttributes } from 'react';
-import { cn } from '../../utils/utils.ts';
+import { cn } from '../../utils';
 
 export default function Input(props: InputHTMLAttributes<HTMLInputElement>) {
 	return (

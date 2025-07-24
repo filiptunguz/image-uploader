@@ -1,6 +1,6 @@
-import { cn } from '../../utils/utils.ts';
+import { cn } from '../utils';
 import type { ReactNode } from 'react';
-import { CloseIcon, EditIcon } from '../../icons/DefaultIcons.tsx';
+import { CloseIcon, EditIcon } from '../icons/DefaultIcons';
 
 type ImagePreviewerProps = {
 	cardClassName?: string;

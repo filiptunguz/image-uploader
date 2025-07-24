@@ -23,7 +23,7 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": [
-		"src"
-	]
+  "paths": {
+    "@image-uploader/image-upload": ["packages/image-upload/src/index.ts"]
+  }
 }
