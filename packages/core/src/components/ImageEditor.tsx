@@ -1,6 +1,6 @@
 import { SouthEastIcon } from '../icons/DefaultIcons.tsx';
 import type { MouseEvent as ReactMouseEvent, RefObject } from 'react';
-import type { Crop } from '../utils/cropImageFile.ts';
+import type { Crop } from '../utils';
 
 type ImageEditorProps = {
 	crop: Crop;
@@ -12,7 +12,7 @@ type ImageEditorProps = {
 	resolutionLabel: string;
 };
 
-export default function ImageEditor(props: ImageEditorProps) {
+export function ImageEditor(props: ImageEditorProps) {
 	return (
 		<>
 			<div

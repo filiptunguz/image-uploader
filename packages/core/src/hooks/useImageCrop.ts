@@ -1,5 +1,5 @@
 import { type MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from 'react';
-import { type Crop, cropImageFile } from '../utils/cropImageFile.ts';
+import { type Crop, cropImageFile } from '../utils';
 
 // Default crop state
 const defaultCrop: Crop = { x: 0, y: 0, width: 0, height: 0, canvasWidth: 0 };

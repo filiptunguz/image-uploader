@@ -1,14 +1,12 @@
-import { cn } from '../utils/utils.ts';
 import { useImageUpload } from '../hooks/useImageUpload.ts';
 import { UploadIcon } from '../icons/DefaultIcons.tsx';
 
 type ImageUploaderProps = {
 	uploadIcon?: React.ReactNode;
 	onFileSelected: (files: File[]) => void;
-	className?: string;
 };
 
-export default function ImageUploader(props: ImageUploaderProps) {
+export function ImageUploader(props: ImageUploaderProps) {
 	const {
 		inputRef,
 		isDragging,
@@ -21,11 +19,7 @@ export default function ImageUploader(props: ImageUploaderProps) {
 
 	return (
 		<div
-			className={cn(
-				'text-primary bg-secondary/40 rounded-3xl p-6 border border-secondary hover:bg-secondary/70 hover:text-primary/80 cursor-pointer transition-colors',
-				isDragging && 'bg-secondary/70 border-dashed',
-				props.className,
-			)}
+			className={`text-primary bg-secondary/40 rounded-3xl p-6 border border-secondary hover:bg-secondary/70 hover:text-primary/80 cursor-pointer transition-colors${isDragging ? ' bg-secondary/70 border-dashed' : ''}`}
 			onDragOver={handleDragOver}
 			onDragLeave={handleDragLeave}
 			onDrop={handleDrop}

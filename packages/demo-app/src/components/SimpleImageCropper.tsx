@@ -1,4 +1,4 @@
-import { useImageCrop, ImageEditor } from '@image-uploader/image-crop';
+import { useImageCrop, ImageEditor } from '@image-uploader/core';
 import { useState } from 'react';
 import SimpleAspectRatioForm from './SimpleAspectRatioForm';
 
