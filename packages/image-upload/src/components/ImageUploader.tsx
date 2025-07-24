@@ -1,4 +1,3 @@
-import { cn } from '../utils/cn.ts';
 import { useImageUpload } from '../hooks/useImageUpload.ts';
 import { UploadIcon } from '../icons/DefaultIcons.tsx';
 
@@ -21,11 +20,7 @@ export function ImageUploader(props: ImageUploaderProps) {
 
 	return (
 		<div
-			className={cn(
-				'text-primary bg-secondary/40 rounded-3xl p-6 border border-secondary hover:bg-secondary/70 hover:text-primary/80 cursor-pointer transition-colors',
-				isDragging && 'bg-secondary/70 border-dashed',
-				props.className,
-			)}
+			className={`text-primary bg-secondary/40 rounded-3xl p-6 border border-secondary hover:bg-secondary/70 hover:text-primary/80 cursor-pointer transition-colors${isDragging ? ' bg-secondary/70 border-dashed' : ''}`}
 			onDragOver={handleDragOver}
 			onDragLeave={handleDragLeave}
 			onDrop={handleDrop}

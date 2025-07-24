@@ -1,7 +1,4 @@
-// TODO: move this to a shared package
-
-import { useImageCrop } from '../hooks/useImageCrop';
-import SimpleImageEditor from './SimpleImageEditor';
+import { useImageCrop, ImageEditor } from '@image-uploader/image-crop';
 import { useState } from 'react';
 import SimpleAspectRatioForm from './SimpleAspectRatioForm';
 
@@ -24,7 +21,7 @@ export default function SimpleImageCropper({ file }: { file: File }) {
 	return (
 		<>
 			<SimpleAspectRatioForm originalSize={data.originalSize} onChange={setAspectRatio} />
-			<SimpleImageEditor {...data} />
+			<ImageEditor {...data} />
 			<button onClick={handleOnCrop} className="cursor-pointer rounded-full px-4 py-2 bg-primary">
 				Apply
 			</button>

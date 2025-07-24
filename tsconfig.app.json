@@ -21,9 +21,10 @@
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
   },
   "paths": {
-    "@image-uploader/image-upload": ["packages/image-upload/src/index.ts"]
+    "@image-uploader/image-upload": ["packages/image-upload/src/index.ts"],
+    "@image-uploader/image-crop": ["packages/image-crop/src/index.ts"],
   }
 }
