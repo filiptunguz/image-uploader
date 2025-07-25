@@ -6,12 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "lint": "eslint ",
+    "preview": "vite preview",
+    "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@tailwindcss/postcss": "^4.1.11",
-    "postcss": "^8.5.6",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "tailwindcss": "^4.1.11"

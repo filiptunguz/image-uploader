@@ -1,5 +1,5 @@
-import { useImageUpload } from '../hooks/useImageUpload.ts';
-import { UploadIcon } from '../icons/DefaultIcons.tsx';
+import { useImageUpload } from '../hooks/useImageUpload';
+import { UploadIcon } from '../icons/DefaultIcons';
 
 type ImageUploaderProps = {
 	uploadIcon?: React.ReactNode;

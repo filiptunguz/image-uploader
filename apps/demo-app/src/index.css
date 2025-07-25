@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+@source "../../../packages/core/src/**/*.{ts,tsx}";
+@source "../../../packages/image-crop/src/**/*.{ts,tsx}";
+@source "../../../packages/image-upload/src/**/*.{ts,tsx}";
+
 @theme inline {
     --color-background: var(--background);
     --color-foreground: var(--foreground);

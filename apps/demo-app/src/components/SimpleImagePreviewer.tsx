@@ -29,7 +29,7 @@ export default function SimpleImagePreviewer({ gridColumns = 4, ...props }: Imag
 				return (
 					<div
 						key={index}
-						className={`flex-shrink-0 size-[200px] border-4 border-secondary rounded-3xl overflow-hidden bg-secondary/40${props.onRemove || props.onEditClick ? 'relative group' : ''}`}
+						className={`flex-shrink-0 size-[200px] border-4 border-secondary rounded-3xl overflow-hidden bg-secondary/40${props.onRemove || props.onEditClick ? ' relative group' : ''}`}
 					>
 						{props.onRemove &&
 							(props.removeIcon ?? (
