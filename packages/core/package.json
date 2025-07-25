@@ -1,10 +1,10 @@
 {
   "name": "@tungero/core",
-  "version": "1.1.3-beta",
+  "version": "1.1.4-beta",
   "type": "module",
   "dependencies": {
-    "@tungero/image-upload": "^1.1.3-beta",
-    "@tungero/image-crop": "^1.1.3-beta"
+    "@tungero/image-upload": "^1.1.4-beta",
+    "@tungero/image-crop": "^1.1.4-beta"
   },
   "peerDependencies": {
     "react": ">=18.0.0",
