@@ -29,6 +29,6 @@
 		"clean": "turbo run clean"
 	},
 	"dependencies": {
-		"@tunga/core": "^1.0.0"
+		"@tungero/core": "^1.0.0"
 	}
 }

@@ -1,4 +1,4 @@
-# @tunga/image-crop
+# @tungero/image-crop
 
 Client-side cropping logic for image manipulation workflows.
 
@@ -14,4 +14,4 @@ This package provides the utilities and logic required for image cropping in the
 
 ## Usage
 
-Use this package alongside `@tunga/image-upload` to build a complete image handling pipeline.
+Use this package alongside `@tungero/image-upload` to build a complete image handling pipeline.

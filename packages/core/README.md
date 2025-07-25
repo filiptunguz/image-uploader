@@ -1,4 +1,4 @@
-# @tunga/core
+# @tungero/core
 
 Shared logic and types for the Image Uploader ecosystem.
 
