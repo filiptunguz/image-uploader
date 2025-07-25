@@ -1,8 +1,14 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "noEmitOnError": true,
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": false,
     "outDir": "dist",
+    "rootDir": "src",
     "jsx": "react-jsx"
   },
-  "include": ["src"]
+  "include": ["src"],
 }

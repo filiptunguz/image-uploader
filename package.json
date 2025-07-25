@@ -27,5 +27,8 @@
 		"build": "turbo run build",
 		"lint": "turbo run lint",
 		"clean": "turbo run clean"
+	},
+	"dependencies": {
+		"@image-uploader/core": "^1.0.0"
 	}
 }

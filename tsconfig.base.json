@@ -13,9 +13,14 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@image-uploader/core": ["packages/core/src"],
-      "@image-uploader/image-upload": ["packages/image-upload/src"],
-      "@image-uploader/image-crop": ["packages/image-crop/src"]
+      "@image-uploader/image-upload": ["packages/image-upload"],
+      "@image-uploader/image-crop": ["packages/image-crop"],
+      "@image-uploader/core": ["packages/core"]
     }
-  }
+  },
+  "references": [
+    { "path": "packages/image-upload" },
+    { "path": "packages/image-crop" },
+    { "path": "packages/core" }
+  ]
 }

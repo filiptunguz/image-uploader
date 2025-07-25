@@ -1,8 +1,17 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": false,
     "outDir": "dist",
-    "jsx": "react-jsx"
+    "rootDir": "src",
+    "jsx": "react-jsx",
   },
-  "include": ["src"]
+  "include": ["src"],
+  "references": [
+    { "path": "../image-upload" },
+    { "path": "../image-crop" }
+  ]
 }

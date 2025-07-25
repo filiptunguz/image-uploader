@@ -2,15 +2,27 @@
   "name": "@image-uploader/core",
   "private": true,
   "version": "1.0.0",
-  "main": "src/index.js",
   "type": "module",
   "dependencies": {
+    "@image-uploader/image-upload": "*",
+    "@image-uploader/image-crop": "*"
+  },
+  "peerDependencies": {
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "tailwindcss": "^4.1.11"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "clean": "rm -rf dist"
-  }
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": ["dist"]
 }

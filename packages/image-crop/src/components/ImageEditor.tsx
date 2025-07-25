@@ -1,6 +1,6 @@
 import type { MouseEvent as ReactMouseEvent, RefObject } from 'react';
 import { SouthEastIcon } from '../icons/DefaultIcons';
-import { Crop } from '../utils';
+import type { Crop } from '../utils';
 
 type ImageEditorProps = {
 	crop: Crop;

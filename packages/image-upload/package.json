@@ -3,19 +3,22 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "main": "src/index.ts",
-  "exports": {
-    ".": {
-      "import": "./src/index.ts"
-    }
-  },
   "dependencies": {
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "tailwindcss": "^4.1.11"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "clean": "rm -rf dist"
-  }
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": ["dist"]
 }
