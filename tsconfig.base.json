@@ -18,9 +18,4 @@
       "@image-uploader/core": ["packages/core"]
     }
   },
-  "references": [
-    { "path": "packages/image-upload" },
-    { "path": "packages/image-crop" },
-    { "path": "packages/core" }
-  ]
 }

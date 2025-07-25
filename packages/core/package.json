@@ -4,8 +4,8 @@
   "version": "1.0.0",
   "type": "module",
   "dependencies": {
-    "@image-uploader/image-upload": "*",
-    "@image-uploader/image-crop": "*"
+    "@image-uploader/image-upload": "^1.0.0",
+    "@image-uploader/image-crop": "^1.0.0"
   },
   "peerDependencies": {
     "react": "^19.1.0",
