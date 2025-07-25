@@ -5,7 +5,6 @@ import SimpleImagePreviewer from './components/SimpleImagePreviewer';
 
 export default function App() {
 	const { files, setFiles, setFileToEdit, fileToEdit, removeFile } = useImageFiles();
-	console.log('App files');
 
 	return (
 		<div className="flex justify-center items-center min-h-screen p-4 bg-background flex-col gap-8">
