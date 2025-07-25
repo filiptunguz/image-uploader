@@ -1,2 +1,2 @@
-export * from '@image-uploader/image-upload';
-export * from '@image-uploader/image-crop';
+export * from '@tunga/image-upload';
+export * from '@tunga/image-crop';

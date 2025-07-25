@@ -1,4 +1,4 @@
-# @image-uploader/image-upload
+# @tunga/image-upload
 
 Modular image upload logic for browser-based applications.
 
@@ -14,4 +14,4 @@ This package provides the core upload logic used to handle user-submitted images
 
 ## Usage
 
-This package is intended to be used within apps in this monorepo. It can be combined with other utilities from `@image-uploader/core`.
+This package is intended to be used within apps in this monorepo. It can be combined with other utilities from `@tunga/core`.

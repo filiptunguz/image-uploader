@@ -1,4 +1,4 @@
-import { useImageCrop, ImageEditor } from '@image-uploader/core';
+import { useImageCrop, ImageEditor } from '@tunga/core';
 import { useState } from 'react';
 import SimpleAspectRatioForm from './SimpleAspectRatioForm';
 

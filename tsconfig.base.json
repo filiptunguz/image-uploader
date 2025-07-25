@@ -13,9 +13,9 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@image-uploader/image-upload": ["packages/image-upload"],
-      "@image-uploader/image-crop": ["packages/image-crop"],
-      "@image-uploader/core": ["packages/core"]
+      "@tunga/image-upload": ["packages/image-upload"],
+      "@tunga/image-crop": ["packages/image-crop"],
+      "@tunga/core": ["packages/core"]
     }
   },
 }

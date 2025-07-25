@@ -1,4 +1,4 @@
-import { ImageUploader } from '@image-uploader/core';
+import { ImageUploader } from '@tunga/core';
 import SimpleImageCropper from './components/SimpleImageCropper';
 import { useImageFiles } from './hooks/useImageFiles';
 import SimpleImagePreviewer from './components/SimpleImagePreviewer';
